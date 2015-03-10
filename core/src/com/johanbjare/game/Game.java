@@ -19,6 +19,9 @@ public class Game extends ApplicationAdapter {
 	MrBall mrball;
 	PlatformHandler platformhandler;
 	
+	int resX;
+	int resY;
+	
 	BitmapFont font;
 	
 	String platform;
@@ -32,8 +35,10 @@ public class Game extends ApplicationAdapter {
 		else
 			platform = "pc";
 		System.out.println(platform);
-		
-		camera = new Camera(400,800);
+
+		resX = 900;
+		resY = 500;
+		camera = new Camera(resX,resY);
 		
 		font = new BitmapFont();
 		font.setColor(Color.DARK_GRAY);
@@ -51,7 +56,9 @@ public class Game extends ApplicationAdapter {
 		input();
 		camera.update();
 		platformhandler.update();
+		mrball.collideCheck(platformhandler);
 		mrball.move();
+		
 		mrball.collideCheck(platformhandler);
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -69,20 +76,35 @@ public class Game extends ApplicationAdapter {
 	}
 	
 	void input(){
-		if(Gdx.input.isTouched()) {
-			Vector3 touchPos = new Vector3();
-			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			mrball.setPosition(touchPos.x - mrball.getWidth()/2, mrball.getY());
-			camera.unproject(touchPos);
-			//bucket.x = touchPos.x - 64 / 2;
+		Vector3 touchPos = new Vector3();
+		if (platform == "pc"){
+			if(Gdx.input.isTouched()) {
+				touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+				mrball.setPosition(touchPos.x - mrball.getWidth()/2, mrball.getY());
+				//camera.unproject(touchPos);
+				//bucket.x = touchPos.x - 64 / 2;
+			}
+			if(Gdx.input.isKeyPressed(Keys.LEFT)) 
+				mrball.forceX -= 1000 * Gdx.graphics.getDeltaTime();
+		    if(Gdx.input.isKeyPressed(Keys.RIGHT))
+		    	mrball.forceX += 1000 * Gdx.graphics.getDeltaTime();
+		    if(Gdx.input.isKeyPressed(Keys.SPACE)){
+		    	mrball.jump();
+		    }
 		}
-		if(Gdx.input.isKeyPressed(Keys.LEFT)) 
-			mrball.setX(mrball.getX()-200 * Gdx.graphics.getDeltaTime());
-	    if(Gdx.input.isKeyPressed(Keys.RIGHT))
-	    	mrball.setX(mrball.getX()+200 * Gdx.graphics.getDeltaTime());
-	    if(Gdx.input.isKeyPressed(Keys.UP))
-	    	camera.moveUp(2);
-	    if(Gdx.input.isKeyPressed(Keys.DOWN))
-	    	camera.moveUp(-2);
+		if (platform == "android"){
+			if (Gdx.input.isTouched(0)){
+				touchPos.set(Gdx.input.getX(0), Gdx.input.getY(0), 0);
+				float forceX = 300*Gdx.graphics.getDeltaTime();
+				Gdx.app.log("info", "");
+				if (touchPos.x < resX/2)
+					forceX *= -1;
+				mrball.forceX += forceX;
+				mrball.translateX(forceX);
+			}
+			if (Gdx.input.isTouched(1)){
+				mrball.jump();
+			}
+		}
 	}
 }

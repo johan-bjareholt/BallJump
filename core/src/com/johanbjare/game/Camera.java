@@ -11,12 +11,4 @@ public class Camera extends OrthographicCamera {
 		this.x = 0;
 		this.y = 0;
 	}
-	
-	void moveUp(int y){
-		super.translate(0, y, 0);
-	}
-	
-	int getYPos(){
-		return y;
-	}
 }
