@@ -18,9 +18,12 @@ public class Game extends ApplicationAdapter {
 	
 	MrBall mrball;
 	PlatformHandler platformhandler;
+	HighscoreHandler highscore;
 	
 	int resX;
 	int resY;
+	
+	boolean inGame = false;
 	
 	BitmapFont font;
 	
@@ -34,7 +37,7 @@ public class Game extends ApplicationAdapter {
 			platform = "android";
 		else
 			platform = "pc";
-		System.out.println(platform);
+		Gdx.app.log("", platform);
 
 		resX = 900;
 		resY = 500;
@@ -42,6 +45,9 @@ public class Game extends ApplicationAdapter {
 		
 		font = new BitmapFont();
 		font.setColor(Color.DARK_GRAY);
+		
+		highscore = new HighscoreHandler(camera, font);
+		highscore.load();
 		
 		gamebatch = new SpriteBatch();
 		uibatch = new SpriteBatch();
@@ -54,43 +60,53 @@ public class Game extends ApplicationAdapter {
 	@Override
 	public void render () {
 		input();
-		camera.update();
-		platformhandler.update();
-		mrball.collideCheck(platformhandler);
-		mrball.move();
-		
-		mrball.collideCheck(platformhandler);
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		gamebatch.setProjectionMatrix(camera.combined);
-		gamebatch.begin();
-		gamebatch.draw(mrball, mrball.getX(), mrball.getY(), mrball.getWidth(), mrball.getHeight());
-		platformhandler.draw(gamebatch);
-		gamebatch.end();
+		if (inGame){
+			camera.update();
+			platformhandler.update();
+			mrball.collideCheck(platformhandler);
+			mrball.move();
+			
+			mrball.collideCheck(platformhandler);
+			
+			gamebatch.setProjectionMatrix(camera.combined);
+			gamebatch.begin();
+			mrball.draw(gamebatch);
+			platformhandler.draw(gamebatch);
+			gamebatch.end();
+			System.out.println(mrball.getY() + " och " + camera.position.y);
+			if (mrball.getY() < camera.position.y-250)
+				inGame = false;
+		}
 		
 		uibatch.begin();
-		font.draw(uibatch, "Testing", 0,camera.viewportHeight);
+		highscore.draw(uibatch);
 		uibatch.end();
 	}
 	
 	void input(){
 		Vector3 touchPos = new Vector3();
 		if (platform == "pc"){
-			if(Gdx.input.isTouched()) {
-				touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-				mrball.setPosition(touchPos.x - mrball.getWidth()/2, mrball.getY());
-				//camera.unproject(touchPos);
-				//bucket.x = touchPos.x - 64 / 2;
+			if (inGame){
+				if(Gdx.input.isTouched()) {
+					touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+					mrball.setPosition(touchPos.x - mrball.getWidth()/2, mrball.getY());
+				}
+				if(Gdx.input.isKeyPressed(Keys.LEFT)) 
+					mrball.forceX -= 1000 * Gdx.graphics.getDeltaTime();
+			    if(Gdx.input.isKeyPressed(Keys.RIGHT))
+			    	mrball.forceX += 1000 * Gdx.graphics.getDeltaTime();
+			    if(Gdx.input.isKeyPressed(Keys.SPACE)){
+			    	mrball.jump();
+			    }
 			}
-			if(Gdx.input.isKeyPressed(Keys.LEFT)) 
-				mrball.forceX -= 1000 * Gdx.graphics.getDeltaTime();
-		    if(Gdx.input.isKeyPressed(Keys.RIGHT))
-		    	mrball.forceX += 1000 * Gdx.graphics.getDeltaTime();
-		    if(Gdx.input.isKeyPressed(Keys.SPACE)){
-		    	mrball.jump();
-		    }
+			else {
+				if (Gdx.input.isKeyJustPressed(Keys.SPACE))
+					inGame = true;
+			}
 		}
 		if (platform == "android"){
 			if (Gdx.input.isTouched(0)){

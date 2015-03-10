@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public class MrBall extends Sprite {
 	Camera camera;
 	
-	boolean falling=true; // Falling == not on ground
+	boolean onGround=false;
+	boolean flipping=false;
+	float fliptime = (float) 0.01;
 	float forceY;
 	float forceX;
 
@@ -17,24 +19,30 @@ public class MrBall extends Sprite {
 		forceY = 0;
 		forceX = 0;
 		setSize(50, 50);
-		setPosition(100, 200);
+		setOrigin(getWidth()/2, getHeight()/2);
+		setPosition(camera.viewportWidth/2, 20);
+		camera.translate(0, -50);
 	}
 	
 	void collideCheck(PlatformHandler platformhandler){
 		Platform colliding = platformhandler.collide(this); 
 		if (forceY < 0 && colliding!=null){
 			this.setY(colliding.getY()+colliding.getHeight()-1);
-			falling = false;
+			onGround = true;
 			forceY = 0;
 		}
 		else
-			falling = true;
+			onGround = false;
 	}
 	
 	void jump(){
-		if (!falling){
+		if (onGround){
 			forceY = 300;
-			falling = true;
+			onGround = false;
+			//if (forceY >= 300){
+				flipping = true;
+				fliptime = (float) 0.01;
+			//}
 		}
 	}
 	
@@ -43,14 +51,24 @@ public class MrBall extends Sprite {
 			  camY = 0;
 		float x = 0;
 		// X
-		if (forceX > 300)
-			forceX = 300;
-		if (falling){
-			x = forceX * Gdx.graphics.getDeltaTime();
+		if (forceX > 500)
+			forceX = 500;
+		else if (forceX < -500)
+			forceX = -500;
+
+		if (onGround){
+			if (forceX > 50)
+				forceX = 500;
+			else if (forceX < -50)
+				forceX = -500;
+			else
+				forceX = 0;
 		}
-		else {
-			x = 300 * Gdx.graphics.getDeltaTime();
-		}
+		x = forceX * Gdx.graphics.getDeltaTime();
+		if (onGround)
+			forceX = 0;
+
+		// Side bounce
 		if (getX()+x < 0){
 			forceX *= -1;
 			x = -(getX()+x);
@@ -61,27 +79,32 @@ public class MrBall extends Sprite {
 			x = -(getX()+getWidth()+x-camera.viewportWidth);
 		}
 		// Y
-		if (falling){
+		if (!onGround){
 			forceY -= 200 * Gdx.graphics.getDeltaTime();
 			y = forceY * Gdx.graphics.getDeltaTime();
 			
+			// Following camera
 			if (forceY > 0 && 
-				getY()-150 > camera.position.y){
-					camY = getY()-150-camera.position.y;
+				getY()-100 > camera.position.y){
+					camY = getY()-100-camera.position.y;
 			}
 			else {
-				camY = -5*Gdx.graphics.getDeltaTime();
+				camY = 5*Gdx.graphics.getDeltaTime();
 			}
-			/*if (y < 0)
-				camY = 10 * Gdx.graphics.getDeltaTime();
-			else
-				camY = y;
-			*/
 		}
 		else {
 			camY = 10 * Gdx.graphics.getDeltaTime();
 		}
 		super.translate(x, y);
 		camera.translate(0, camY);
+		
+		if (flipping){
+			fliptime += Gdx.graphics.getDeltaTime();
+			setRotation((360)*fliptime);
+			if (fliptime > 2){
+				flipping = false;
+				setRotation(0);
+			}
+		}
 	}
 }
