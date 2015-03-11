@@ -24,8 +24,10 @@ public class Game extends ApplicationAdapter {
 	int resY;
 	
 	boolean inGame = false;
-	
+
 	BitmapFont font;
+	
+	String menutext;
 	
 	String platform;
 	
@@ -46,6 +48,15 @@ public class Game extends ApplicationAdapter {
 		font = new BitmapFont();
 		font.setColor(Color.DARK_GRAY);
 		
+		if (platform == "android")
+			menutext = "Touch to start the game";
+		else
+			menutext = "Press space to start the game";
+		
+		loadLevel();
+	}
+
+	public void loadLevel(){
 		highscore = new HighscoreHandler(camera, font);
 		highscore.load();
 		
@@ -56,7 +67,7 @@ public class Game extends ApplicationAdapter {
 		
 		platformhandler = new PlatformHandler(camera);
 	}
-
+	
 	@Override
 	public void render () {
 		input();
@@ -78,12 +89,17 @@ public class Game extends ApplicationAdapter {
 			platformhandler.draw(gamebatch);
 			gamebatch.end();
 			System.out.println(mrball.getY() + " och " + camera.position.y);
-			if (mrball.getY() < camera.position.y-250)
+			if (mrball.getY() < camera.position.y-250){
 				inGame = false;
+				loadLevel();
+			}
 		}
 		
 		uibatch.begin();
-		highscore.draw(uibatch);
+		if (inGame)
+			highscore.draw(uibatch);
+		else
+			font.draw(uibatch, menutext, camera.viewportWidth/2,camera.viewportHeight/2);
 		uibatch.end();
 	}
 	
@@ -109,17 +125,21 @@ public class Game extends ApplicationAdapter {
 			}
 		}
 		if (platform == "android"){
-			if (Gdx.input.isTouched(0)){
-				touchPos.set(Gdx.input.getX(0), Gdx.input.getY(0), 0);
-				float forceX = 300*Gdx.graphics.getDeltaTime();
-				Gdx.app.log("info", "");
-				if (touchPos.x < resX/2)
-					forceX *= -1;
-				mrball.forceX += forceX;
-				mrball.translateX(forceX);
+			if (inGame){
+				if (Gdx.input.isTouched(0)){
+					touchPos.set(Gdx.input.getX(0), Gdx.input.getY(0), 0);
+					float forceX = 1000*Gdx.graphics.getDeltaTime();
+					if (touchPos.x < resX/2)
+						forceX *= -1;
+					mrball.forceX += forceX;
+				}
+				if (Gdx.input.isTouched(1)){
+					mrball.jump();
+				}
 			}
-			if (Gdx.input.isTouched(1)){
-				mrball.jump();
+			else {
+				if (Gdx.input.isTouched())
+					inGame = true;
 			}
 		}
 	}
