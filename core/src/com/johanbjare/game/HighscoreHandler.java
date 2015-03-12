@@ -30,11 +30,4 @@ public class HighscoreHandler {
 		}
 		prefs.flush();
 	}
-	
-	void draw(SpriteBatch batch){
-		int x = 0, y = (int) camera.viewportHeight;
-		font.draw(batch, "Highscore: " + Integer.toString(highestscore), x,y);
-		y -= 20;
-		font.draw(batch, "Highest combo: " + Integer.toString(highestcombo), x,y);
-	}
 }

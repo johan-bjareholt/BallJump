@@ -26,6 +26,7 @@ public class Game extends ApplicationAdapter {
 	boolean inGame = false;
 
 	BitmapFont font;
+	BitmapFont font_small;
 	
 	String menutext;
 	
@@ -46,8 +47,10 @@ public class Game extends ApplicationAdapter {
 		
 		camera = new Camera(resX,resY);
 		
-		font = new BitmapFont();
+		font = new BitmapFont(Gdx.files.internal("fonts/dejavu_normal.fnt"));
+		font_small = new BitmapFont(Gdx.files.internal("fonts/dejavu_small.fnt"));
 		font.setColor(Color.DARK_GRAY);
+		font_small.setColor(Color.DARK_GRAY);
 		
 		if (platform == "android")
 			menutext = "Touch to start the game";
@@ -99,12 +102,13 @@ public class Game extends ApplicationAdapter {
 		
 		uibatch.begin();
 		if (inGame){
-			font.draw(uibatch, "Score: " + Integer.toString(mrball.score), 0,camera.viewportHeight);
-			font.draw(uibatch, "Combo: " + Integer.toString(mrball.combo), 0,camera.viewportHeight-20);
+			font_small.draw(uibatch, "Score: " + Integer.toString(mrball.score), 0,camera.viewportHeight);
+			font_small.draw(uibatch, "Combo: " + Integer.toString(mrball.combo), 0,camera.viewportHeight-20);
 		}
 		else {
-			highscore.draw(uibatch);
-			font.draw(uibatch, menutext, camera.viewportWidth/2-(font.getSpaceWidth()*menutext.length()/2),camera.viewportHeight/2);
+			font.draw(uibatch, menutext, camera.viewportWidth/2-(font.getSpaceWidth()*menutext.length()/2)-100,camera.viewportHeight/2);
+			font_small.draw(uibatch, "Highscore: " + Integer.toString(highscore.highestscore), 0, camera.viewportHeight);
+			font_small.draw(uibatch, "Highest combo: " + Integer.toString(highscore.highestcombo), 0,camera.viewportHeight-20);
 		}
 		uibatch.end();
 	}
@@ -113,10 +117,6 @@ public class Game extends ApplicationAdapter {
 		Vector3 touchPos = new Vector3();
 		if (platform == "pc"){
 			if (inGame){
-				if(Gdx.input.isTouched()) {
-					touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-					mrball.setPosition(touchPos.x - mrball.getWidth()/2, mrball.getY());
-				}
 				if(Gdx.input.isKeyPressed(Keys.LEFT)) 
 					mrball.forceX -= 1000 * Gdx.graphics.getDeltaTime();
 			    if(Gdx.input.isKeyPressed(Keys.RIGHT))
