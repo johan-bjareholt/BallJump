@@ -40,9 +40,10 @@ public class Game extends ApplicationAdapter {
 		else
 			platform = "pc";
 		Gdx.app.log("", platform);
-
+		
 		resX = 900;
 		resY = 500;
+		
 		camera = new Camera(resX,resY);
 		
 		font = new BitmapFont();
@@ -53,12 +54,13 @@ public class Game extends ApplicationAdapter {
 		else
 			menutext = "Press space to start the game";
 		
+		highscore = new HighscoreHandler(camera, font);
+		
 		loadLevel();
 	}
 
 	public void loadLevel(){
-		highscore = new HighscoreHandler(camera, font);
-		highscore.load();
+		camera.reset();
 		
 		gamebatch = new SpriteBatch();
 		uibatch = new SpriteBatch();
@@ -88,18 +90,22 @@ public class Game extends ApplicationAdapter {
 			mrball.draw(gamebatch);
 			platformhandler.draw(gamebatch);
 			gamebatch.end();
-			System.out.println(mrball.getY() + " och " + camera.position.y);
 			if (mrball.getY() < camera.position.y-250){
 				inGame = false;
+				highscore.registerScore(mrball.score, mrball.highestCombo);
 				loadLevel();
 			}
 		}
 		
 		uibatch.begin();
-		if (inGame)
+		if (inGame){
+			font.draw(uibatch, "Score: " + Integer.toString(mrball.score), 0,camera.viewportHeight);
+			font.draw(uibatch, "Combo: " + Integer.toString(mrball.combo), 0,camera.viewportHeight-20);
+		}
+		else {
 			highscore.draw(uibatch);
-		else
-			font.draw(uibatch, menutext, camera.viewportWidth/2,camera.viewportHeight/2);
+			font.draw(uibatch, menutext, camera.viewportWidth/2-(font.getSpaceWidth()*menutext.length()/2),camera.viewportHeight/2);
+		}
 		uibatch.end();
 	}
 	

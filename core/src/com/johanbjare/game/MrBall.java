@@ -12,16 +12,21 @@ public class MrBall extends Sprite {
 	float fliptime = (float) 0.01;
 	float forceY;
 	float forceX;
+	
+	int score = 0;
+	int height = 0;
+	Platform lastPlatform = null;
+	int combo = 0;
+	int highestCombo = 0;
 
 	MrBall(Camera camera){
-		super(new Texture("mr ball.png"),200,200);
+		super(new Texture(Gdx.files.internal("png/mr ball.png").path()),200,200);
 		this.camera = camera;
 		forceY = 0;
 		forceX = 0;
 		setSize(50, 50);
 		setOrigin(getWidth()/2, getHeight()/2);
 		setPosition(camera.viewportWidth/2, 20);
-		camera.translate(0, -50);
 	}
 	
 	void collideCheck(PlatformHandler platformhandler){
@@ -30,6 +35,22 @@ public class MrBall extends Sprite {
 			this.setY(colliding.getY()+colliding.getHeight()-1);
 			onGround = true;
 			forceY = 0;
+			if (height/2 < (int)colliding.getY()/2){
+				score = (int)colliding.getY()/2;
+			}
+			height = (int)colliding.getY();
+			if (lastPlatform != null && 
+				colliding.getY() >= lastPlatform.getY())
+			{
+				if (lastPlatform != colliding)
+					combo += 1;
+				if (combo > highestCombo)
+					highestCombo = combo;
+			}
+			else{
+				combo = 0;
+			}
+			lastPlatform = colliding;
 		}
 		else
 			onGround = false;
