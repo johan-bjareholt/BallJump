@@ -110,7 +110,7 @@ public class MrBall extends Sprite {
 					camY = getY()-100-camera.position.y;
 			}
 			else {
-				camY = 5*Gdx.graphics.getDeltaTime();
+				camY = camera.camspeed*Gdx.graphics.getDeltaTime();
 			}
 		}
 		else {
