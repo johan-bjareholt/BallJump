@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class PlatformHandler {
 	OrthographicCamera camera;
 	ArrayList<Platform> platforms;
-	int platformcount = 10;
+	int platformcount;
 	int highestplatform = 0;
 
 	PlatformHandler(OrthographicCamera camera){
 		this.camera = camera;
+		platformcount = (int) ((camera.viewportHeight/100)+5);
 		platforms = new ArrayList<Platform>();
 	}
 	
@@ -25,7 +26,7 @@ public class PlatformHandler {
 			highestplatform += 100;
 		}
 		for (int i=0; i<platforms.size(); i++){
-			if (platforms.get(i).getY() < camera.position.y-camera.viewportHeight){
+			if (platforms.get(i).getY() < camera.position.y-(camera.viewportHeight/2)){
 				platforms.remove(i);
 				i--;
 			}

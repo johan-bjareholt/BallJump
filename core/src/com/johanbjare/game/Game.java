@@ -17,10 +17,10 @@ public class Game extends ApplicationAdapter {
 	SpriteBatch uibatch;
 	ShapeRenderer shapeRenderer;
 	
-	Clock clock;
-	MrBall mrball;
-	PlatformHandler platformhandler;
-	HighscoreHandler highscore;
+	static Clock clock;
+	static MrBall mrball;
+	static PlatformHandler platformhandler;
+	static HighscoreHandler highscore;
 	
 	static Camera camera;
 	
@@ -83,21 +83,25 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		if (inGame){
+			// Game logic
 			camera.update();
 			clock.update();
 			platformhandler.update();
 			mrball.collideCheck(platformhandler);
 			mrball.move();
-			
+			camera.updatePos();
 			mrball.collideCheck(platformhandler);
 			
+			// Game drawing
 			gamebatch.setProjectionMatrix(camera.combined);
 			gamebatch.begin();
 			mrball.draw(gamebatch);
 			platformhandler.draw(gamebatch);
 			clock.draw();
 			gamebatch.end();
-			if (mrball.getY() < camera.position.y-250){
+			
+			// Lose check
+			if (mrball.getY() < camera.position.y-(camera.viewportHeight/2)){
 				inGame = false;
 				highscore.registerScore(mrball.score, mrball.highestCombo);
 				loadLevel();

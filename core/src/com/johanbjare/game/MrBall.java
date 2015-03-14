@@ -58,18 +58,14 @@ public class MrBall extends Sprite {
 	
 	void jump(){
 		if (onGround){
-			forceY = 300;
+			forceY = 200;
+			forceY += Math.abs(forceX/3);
 			onGround = false;
-			//if (forceY >= 300){
-				flipping = true;
-				fliptime = (float) 0.01;
-			//}
 		}
 	}
 	
 	void move(){
-		float y = 0,
-			  camY = 0;
+		float y = 0;
 		float x = 0;
 		// X
 		if (forceX > 500)
@@ -99,33 +95,26 @@ public class MrBall extends Sprite {
 			x = 0;
 			x = -(getX()+getWidth()+x-camera.viewportWidth);
 		}
+
 		// Y
 		if (!onGround){
 			forceY -= 200 * Gdx.graphics.getDeltaTime();
 			y = forceY * Gdx.graphics.getDeltaTime();
-			
-			// Following camera
-			if (forceY > 0 && 
-				getY()-100 > camera.position.y){
-					camY = getY()-100-camera.position.y;
-			}
-			else {
-				camY = camera.camspeed*Gdx.graphics.getDeltaTime();
-			}
 		}
-		else {
-			camY = 10 * Gdx.graphics.getDeltaTime();
-		}
+
 		super.translate(x, y);
-		camera.translate(0, camY);
 		
 		if (flipping){
 			fliptime += Gdx.graphics.getDeltaTime();
 			setRotation((360)*fliptime);
-			if (fliptime > 2){
+			if (fliptime > 1){
 				flipping = false;
 				setRotation(0);
 			}
+		}
+		if (!flipping && forceY >= 150){
+			flipping = true;
+			fliptime = (float) 0.01;
 		}
 	}
 }

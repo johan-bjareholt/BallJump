@@ -9,11 +9,11 @@ public class Platform extends Sprite {
 	{
 		super(new Texture("png/platform.png"),200,25);
 		if (y%1000==0){
-			this.setSize(900,10);
+			this.setSize(Game.camera.viewportWidth,10);
 			x=0;
 			SpriteBatch textext = new SpriteBatch(this.getTexture().glTarget);
 			textext.begin();
-			
+			Game.font_small.draw(textext, Float.toString(this.getY()) , this.getWidth()/2, 0);
 			textext.end();
 		}
 		else

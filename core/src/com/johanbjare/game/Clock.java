@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.MathUtils;
 public class Clock {
 	float gamecounter;
 	float counttime = 15;
+	float angle = 0;
 	ShapeRenderer sr;
 	Camera camera;
 	
@@ -22,6 +23,7 @@ public class Clock {
 			camera.camspeed += 25;
 			gamecounter = gamecounter%counttime;
 		}
+		angle = (float) ((2*Math.PI)*(gamecounter/counttime)-(Math.PI/2));
 	}
 	
 	public void draw(){
@@ -32,9 +34,6 @@ public class Clock {
 		sr.begin(ShapeType.Line);
 		
 		sr.setColor(0, 0, 0, 1);
-		
-		float angle = (float) ((2*Math.PI)*(gamecounter/counttime)-(Math.PI/2));
-		System.out.println(angle);
 		
 		sr.circle(camera.viewportWidth-radius, camera.viewportHeight-radius, radius);
 		sr.line(x, y, x+(radius*MathUtils.cos(-angle)), y+(radius*MathUtils.sin(-angle)));
