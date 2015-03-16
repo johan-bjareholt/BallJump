@@ -9,8 +9,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		System.setProperty("org.lwjgl.opengl.Display.allowSoftwareOpenGL", "true");
 		config.title = "name";
-		config.width = 900;
-		config.height = 500;
+		config.width = 1280;
+		config.height = 720;
 		config.foregroundFPS = 60;
 		config.vSyncEnabled = true;
 		new LwjglApplication(new Game(), config);
