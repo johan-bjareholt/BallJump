@@ -108,6 +108,7 @@ public class Game extends ApplicationAdapter {
 			}
 		}
 		
+		// UI Drawing
 		uibatch.begin();
 		if (inGame){
 			font_small.draw(uibatch, "Score: " + Integer.toString(mrball.score), 0,camera.viewportHeight);

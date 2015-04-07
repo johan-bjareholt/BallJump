@@ -6,24 +6,24 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 
 public class Clock {
-	float gamecounter;
+	float time = 0;
 	float counttime = 15;
+	int speedups = 0;
 	float angle = 0;
 	ShapeRenderer sr;
 	Camera camera;
 	
 	public Clock(Camera camera, ShapeRenderer sr){
-		gamecounter = 0;
 		this.camera = camera;
 		this.sr = sr;
 	}
 	public void update(){
-		gamecounter += Gdx.graphics.getDeltaTime();
-		if (gamecounter >= counttime){
+		time += Gdx.graphics.getDeltaTime();
+		if ((int)(time/counttime) > speedups){
 			camera.camspeed += 25;
-			gamecounter = gamecounter%counttime;
+			speedups += 1;
 		}
-		angle = (float) ((2*Math.PI)*(gamecounter/counttime)-(Math.PI/2));
+		angle = (float) ((2*Math.PI)*(time%counttime/counttime)-(Math.PI/2));
 	}
 	
 	public void draw(){

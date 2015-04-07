@@ -14,10 +14,10 @@ public class Platform extends Sprite {
 			this.setTexture(new Texture("png/platform_long.png"));
 			this.setSize(Game.camera.viewportWidth,10);
 			x=0;
-			//SpriteBatch textext = new SpriteBatch(this.getTexture().glTarget);
-			//textext.begin();
-			//Game.font_small.draw(textext, Float.toString(this.getY()) , this.getWidth()/2, 0);
-			//textext.end();
+			SpriteBatch textext = new SpriteBatch(this.getTexture().glTarget);
+			textext.begin();
+			Game.font_small.draw(textext, Float.toString(this.getY()) , this.getWidth()/2, 0);
+			textext.end();
 		}
 		else {
 			this.setTexture(new Texture("png/platform.png"));
